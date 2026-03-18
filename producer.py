@@ -1,6 +1,5 @@
 import json
 import uuid
-from multiprocessing.connection import deliver_challenge
 
 from confluent_kafka import Producer
 
@@ -16,6 +15,8 @@ def delivery_report(err, msg):
         print(f"Delivery failed: {err}")
     else:
         print(f"Delivered successfully: {msg.value().decode("utf-8")}")
+        print(dir(msg)) # to review the key fields of the message
+        print(f"Delivered to {msg.topic()} : partition: {msg.partition()} at offset: {msg.offset()}")
 
 order = {
     "order_id": str(uuid.uuid4()),
