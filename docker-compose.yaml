@@ -38,10 +38,10 @@ services:
 
       # Listeners - plaintext for listening regular messages from producers or consumers, controllers for cluster management traffic
       # Listeners is where the Kafka container open its door to receive traffic
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092, CONTROLLER://0.0.0.0:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_CONTROLLED_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT, PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
 
       # Store all of its logs, metadata
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
@@ -52,4 +52,3 @@ services:
 
 volumes:
   kafka_kraft:
-
