@@ -15,7 +15,7 @@ def delivery_report(err, msg):
     if err:
         print(f"Delivery failed: {err}")
     else:
-        print(f"Delivered successfully: {msg.value.decode("utf-8")}")
+        print(f"Delivered successfully: {msg.value().decode("utf-8")}")
 
 order = {
     "order_id": str(uuid.uuid4()),
