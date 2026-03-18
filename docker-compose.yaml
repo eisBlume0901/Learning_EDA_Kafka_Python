@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.8.3
+    container_name: kafka
+    ports:
+      - "9092:9092"
+
+    environment:
+      KAFKA_KRAFT_MODE: 'true'
+
+      # A Cluster is made up of multiple nodes working together
+      # A Node is a Kafka broker inside a cluster. It can be a broker or controller or both
+      # A Kafka broker is a job a node performs (receiving, storing, and sending messages)
+
+      # Default Node is 3
+      CLUSTER_ID: 'r+wESEuXS5+uXQAAsXPesg'
+      KAFKA_NODE_ID: 1
+
+      # A Node controller manages the cluster itself by monitoring health of the broker
+      # keeping the map of where all the metadata is stored, and reorganizes things if a broker crashes
+      # can be replaced by a new broker if the controller is broken
+      # A Node broker handles the actual data, it receives messages from produces, stores them on
+      # disk and sends them to consumers
+
+      # Controller quorum voters are the nodes that participate in the controller election process.
+      #They vote to elect a controller from the available nodes in the cluster. In this case, we have one voter (1@kafka:9093)
+      #which means that the node with ID 1 will be the controller and will listen on port 9093 for controller communication.
+
+      # Topic replication factor is the number of copies of a topic's partitions that are maintained across the cluster
+      # A default replication factor of 3 for instance means creating 3 copies for the broker
+      # A replication factor of 1 means no backup, no copy, forever lost when corrupted
+
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+      # Listeners - plaintext for listening regular messages from producers or consumers, controllers for cluster management traffic
+      # Listeners is where the Kafka container open its door to receive traffic
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092, CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLED_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT, PLAINTEXT:PLAINTEXT
+
+      # Store all of its logs, metadata
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+
+    # Data persistence of kafka metadata, logs
+    volumes:
+      - kafka_kraft:/var/lib/kafka/data
+
+volumes:
+  kafka_kraft:
+
