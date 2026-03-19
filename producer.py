@@ -5,7 +5,7 @@ from confluent_kafka import Producer
 # bootstrap.servers - provides the initial hosts that act as a starting
 # point for Kafka client to discover the full set of alive servers in the cluster
 producer_config = {
-    'bootstrap.servers': 'localhost:9092'
+    "bootstrap.servers": "localhost:9092"
 }
 
 producer = Producer(producer_config)
