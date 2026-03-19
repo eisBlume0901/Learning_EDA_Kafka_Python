@@ -24,24 +24,31 @@ consumer.subscribe(["orders"])
 
 print("Consumer is running and subscribed to orders topic")
 
-# Check continuously if there is a new order from their subscribed orders topic
-while True:
-    # .poll() - fetch data from the topics or partitions the consumer is subscribed to
-    # 1.0 - timeout in seconds, will wait up to 1 second for new messages. If no messages are
-    # immediately available, it will block (wait) for up to 1.0 seconds for new messages to arrive
+try:
+    # Check continuously if there is a new order from their subscribed orders topic
+    while True:
+        # .poll() - fetch data from the topics or partitions the consumer is subscribed to
+        # 1.0 - timeout in seconds, will wait up to 1 second for new messages. If no messages are
+        # immediately available, it will block (wait) for up to 1.0 seconds for new messages to arrive
 
-    # Instead of Kafka using pushing new messages to the consumers, the consumers has the freedom
-    # to pull messages at their own pace and processing capacity using .poll() method
-    # Benefits: Load balancing, pausing, catching up, simple, reliable, scalable, controllable
-    msg = consumer.poll(1.0)
-    if msg is None:
-        continue
-    if msg.error():
-        print(f"Consumer error: {msg.error()}")
-        continue
+        # Instead of Kafka using pushing new messages to the consumers, the consumers has the freedom
+        # to pull messages at their own pace and processing capacity using .poll() method
+        # Benefits: Load balancing, pausing, catching up, simple, reliable, scalable, controllable
+        msg = consumer.poll(1.0)
+        if msg is None:
+            continue
+        if msg.error():
+            print(f"Consumer error: {msg.error()}")
+            continue
 
-    # Producer encodes the message to what Kafka understands, Consumer decodes the message
-    # into a string/
-    value = msg.value().decode("utf-8")
-    order = json.loads(value)
-    print(f"Received order: {order.get("quantity")} x {order.get("item")} from {order.get("user")}")
+        # Producer encodes the message to what Kafka understands, Consumer decodes the message
+        # into a string/
+        value = msg.value().decode("utf-8")
+        order = json.loads(value)
+        print(f"Received order: {order.get("quantity")} x {order.get("item")} from {order.get("user")}")
+except KeyboardInterrupt:
+    print(f"\n Stopping consumer")
+finally:
+    # .close() - ensures that network connections and file handles are closed, offsets are committed, and the consumer's partition
+    # assignments are revoked. Essential for properly releasing resources associated with a consumer instance.
+    consumer.close()
